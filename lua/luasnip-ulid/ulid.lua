@@ -134,11 +134,14 @@ end
 ---Get Unix time with milliseconds using Bash
 ---@return integer|nil
 local function get_time()
-    local handle = io.popen("date +%s%N | cut -b1-13", "r")
-    if handle == nil then
+    local success, response = pcall(function()
+        return vim.fn.system("date +%s%N | cut -b1-13")
+    end)
+    if not success then
+        vim.notify(response, vim.log.levels.ERROR)
         return nil
     end
-    return handle:read("*a")
+    return response
 end
 
 ---Turn Unix time into a table of bytes
